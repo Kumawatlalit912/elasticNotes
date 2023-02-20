@@ -1,0 +1,86 @@
+put hola/
+{
+  "settings":{
+    "analysis":{
+      "analyzer":{
+        "my-analyzer":{
+          "tokenizer":"my-tokenizer",
+          "filter":["lowercase"]
+          
+        },
+        "my-analyzer_search":{
+          "tokenizer":"lowercase"
+        }
+      },
+      "tokenizer":{
+        "my-tokenizer":{
+        "type":"edge_ngram",
+        "token_chars":["digit","letter"],
+        "max_gram":10,
+        "min_gram":2
+        }
+      }
+    }
+  },
+  "mappings":{
+    "properties":{
+      "title":{
+        "type":"text",
+        "analyzer":"my-analyzer",
+        "search_analyzer":"my-analyzer_search"
+      }
+    }
+  }
+}
+
+
+post hola/_doc/1
+{
+  "title":"hola amigo whats up"
+}
+
+post hola/_refresh
+
+get hola/_search
+{
+  "query":{
+    "match":{
+    "title":{
+      "query":"ho",
+      "operator": "and"
+    }
+    }
+  }
+}
+
+
+post hola/_analyze
+{
+  "text":"hola amigo whats up",
+  "analyzer":"my-analyzer"
+}
+
+
+post hola/_search
+{
+  "query":{
+    "match":{
+      "title":{
+        "query":"amig",
+        "operator": "and"
+      }
+    }
+  }
+}
+
+post hola/_search
+{
+  "query":{
+    "match":{
+      "title":{
+        "query": "up",
+        "operator": "and"
+      }
+    }
+  }
+}
